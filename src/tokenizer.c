@@ -25,7 +25,7 @@ bool IsDigit(char ch) {
   return ch >= '0' && ch <= '9';
 }
 
-TOKEN String() {
+Token String() {
   if (IsAlpha(Peek())) {
     scanner.current++;
   }
@@ -34,11 +34,10 @@ TOKEN String() {
   }
   scanner.current--;
   scanner.current = "\0";
-  printf("String Token : %s\n", scanner.start);
-  return TOKEN_STRING;
+  return MakeToken(TOKEN_STRING);
 }
 
-TOKEN Number() {
+Token Number() {
   while (IsDigit(Peek())) {
     scanner.current++;
   }
@@ -50,8 +49,7 @@ TOKEN Number() {
   }
   scanner.current--;
   scanner.current = "\0";
-  printf("Number Token : %s\n", scanner.start);
-  return TOKEN_NUMBER;
+  return MakeToken(TOKEN_NUMBER);
 }
 
 void SkipWhiteSpace() {
@@ -61,12 +59,20 @@ void SkipWhiteSpace() {
   }
 }
 
-TOKEN Tokenizer(const char *source) {
+Token MakeToken(TOKEN_TYPE type) {
+  Token token;
+  token.type_ = type;
+  token.start_ = scanner.start;
+  token.length_ = (int)(scanner.current - scanner.start);
+  return token;
+}
+
+Token Tokenizer(const char *source) {
   scanner.start = source;
   scanner.current = source;
   char ch = Peek();
   if (ch == '(' || ch == ')') {
-    return TOKEN_PAREN;
+    return MakeToken(TOKEN_PAREN);
   }
   if (IsAlpha(ch)) {
     return String();
@@ -74,5 +80,5 @@ TOKEN Tokenizer(const char *source) {
   if (IsDigit(ch)) {
     return Number();
   }
-  return TOKEN_ERROR;
+  return MakeToken(TOKEN_ERROR);
 }
