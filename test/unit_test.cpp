@@ -1,9 +1,6 @@
 #include "mu_unit.h"
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "tokenizer.h"
+#include <string.h>
 
 int tests_access = 0;
 int tests_failed = 0;
@@ -29,7 +26,7 @@ bool TokenEq(Token *t1, Token *t2) {
   for (int i = 0; i < t1->length_; i++) {
     if (t1->start_[i] != t2->start_[i]) {
       printf("String error %d : %d!\n", t1->start_[i], t2->start_[i]);
-    return false;
+      return false;
     }
   }
   return true;
