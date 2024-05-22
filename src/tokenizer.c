@@ -32,8 +32,6 @@ Token String() {
   while (IsAlpha(Peek()) || IsDigit(Peek())) {
     scanner.current++;
   }
-  scanner.current--;
-  scanner.current = "\0";
   return MakeToken(TOKEN_STRING);
 }
 
@@ -47,8 +45,6 @@ Token Number() {
   while (IsDigit(Peek())) {
     scanner.current++;
   }
-  scanner.current--;
-  scanner.current = "\0";
   return MakeToken(TOKEN_NUMBER);
 }
 
@@ -68,10 +64,12 @@ Token MakeToken(TOKEN_TYPE type) {
 }
 
 Token Tokenizer(const char *source) {
-  scanner.start = source;
   scanner.current = source;
+  SkipWhiteSpace();
+  scanner.start = scanner.current;
   char ch = Peek();
   if (ch == '(' || ch == ')') {
+    scanner.current++;
     return MakeToken(TOKEN_PAREN);
   }
   if (IsAlpha(ch)) {

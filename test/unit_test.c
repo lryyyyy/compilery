@@ -9,7 +9,7 @@ int tests_access = 0;
 int tests_failed = 0;
 int tests_summary = 0;
 
-Token MakeTokenStr(TOKEN_TYPE type, const char *str) {
+Token MakeTestToken(TOKEN_TYPE type, const char *str) {
   Token token;
   token.type_ = type;
   token.start_ = str;
@@ -22,50 +22,52 @@ bool TokenEq(Token *t1, Token *t2) {
     printf("Type error!\n");
     return false;
   }
-  if (t1->start_ != t2->start_) {
-    printf("Start error!\n");
-    return false;
-  }
   if (t1->length_ != t2->length_) {
     printf("Length error %d : %d!\n", t1->length_, t2->length_);
     return false;
+  }
+  for (int i = 0; i < t1->length_; i++) {
+    if (t1->start_[i] != t2->start_[i]) {
+      printf("String error %d : %d!\n", t1->start_[i], t2->start_[i]);
+    return false;
+    }
   }
   return true;
 }
 
 static char *test_paren() {
   Token token = Tokenizer("(");
-  Token result = MakeTokenStr(TOKEN_PAREN, "(");
+  Token result = MakeTestToken(TOKEN_PAREN, "(");
   mu_assert("type: 'paren',  value: '('", TokenEq(&token, &result));
   token = Tokenizer(")");
-  result = MakeTokenStr(TOKEN_PAREN, ")");
+  result = MakeTestToken(TOKEN_PAREN, ")");
   mu_assert("type: 'paren',  value: ')'", TokenEq(&token, &result));
   return 0;
 }
 
 static char *test_string() {
   Token token = Tokenizer("abc1_");
-  Token result = MakeTokenStr(TOKEN_STRING, "abc1_");
+  Token result = MakeTestToken(TOKEN_STRING, "abc1_");
   mu_assert("type: 'string',  value: 'abc1_'", TokenEq(&token, &result));
   token = Tokenizer("abc1.");
-  result = MakeTokenStr(TOKEN_STRING, "abc1.");
-  mu_assert("type: 'string',  value: 'abc1.'", TokenEq(&token, &result));
+  result = MakeTestToken(TOKEN_STRING, "abc1");
+  mu_assert("type: 'string',  value: 'abc1'", TokenEq(&token, &result));
   return 0;
 }
 
 static char *test_number() {
   Token token = Tokenizer("123");
-  Token result = MakeTokenStr(TOKEN_NUMBER, "123");
+  Token result = MakeTestToken(TOKEN_NUMBER, "123");
   mu_assert("type: 'number',  value: '123'", TokenEq(&token, &result));
   token = Tokenizer("12a");
-  result = MakeTokenStr(TOKEN_NUMBER, "12a");
-  mu_assert("type: 'number',  value: '12a'", TokenEq(&token, &result));
+  result = MakeTestToken(TOKEN_NUMBER, "12");
+  mu_assert("type: 'number',  value: '12'", TokenEq(&token, &result));
   return 0;
 }
 
 static char *test_token() {
   Token token = Tokenizer("(add 2 (subtract 4 2))");
-  Token result = MakeTokenStr(TOKEN_PAREN, "(");
+  Token result = MakeTestToken(TOKEN_PAREN, "(");
   mu_assert("type: 'paren',  value: '('", TokenEq(&token, &result));
   return 0;
 }
