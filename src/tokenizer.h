@@ -1,3 +1,5 @@
+#include <vector>
+
 typedef enum TOKEN_TYPE_ {
   TOKEN_PAREN,
   TOKEN_STRING,
@@ -13,4 +15,4 @@ typedef struct Token_ {
 
 Token MakeToken(TOKEN_TYPE type);
 
-Token Tokenizer(const char *source);
+std::vector<Token> Tokenizer(const char *source);

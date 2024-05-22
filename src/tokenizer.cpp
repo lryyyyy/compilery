@@ -1,6 +1,5 @@
 #include "tokenizer.h"
 
-
 typedef struct Scanner_ {
   const char *start;
   const char *current;
@@ -51,7 +50,9 @@ void SkipWhiteSpace() {
   char ch = Peek();
   while (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') {
     scanner.current++;
+    ch = Peek();
   }
+  scanner.start = scanner.current;
 }
 
 Token MakeToken(TOKEN_TYPE type) {
@@ -62,8 +63,7 @@ Token MakeToken(TOKEN_TYPE type) {
   return token;
 }
 
-Token Tokenizer(const char *source) {
-  scanner.current = source;
+Token ScanToken() {
   SkipWhiteSpace();
   scanner.start = scanner.current;
   char ch = Peek();
@@ -78,4 +78,13 @@ Token Tokenizer(const char *source) {
     return Number();
   }
   return MakeToken(TOKEN_ERROR);
+}
+
+std::vector<Token> Tokenizer(const char *source) {
+  std::vector<Token> tokens;
+  scanner.current = source;
+  do {
+    tokens.emplace_back(ScanToken());
+  } while (tokens.back().type_ != TOKEN_ERROR);
+  return tokens;
 }
