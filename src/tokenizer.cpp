@@ -11,10 +11,6 @@ char Peek() {
   return *scanner.current;
 }
 
-char PeekNext() {
-  return *scanner.current++;
-}
-
 bool IsAlpha(char ch) {
   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_';
 }
@@ -58,7 +54,7 @@ void SkipWhiteSpace() {
 Token MakeToken(TOKEN_TYPE type) {
   Token token;
   token.type_ = type;
-  token.start_ = scanner.start;
+  token.value_ = scanner.start;
   token.length_ = (int)(scanner.current - scanner.start);
   return token;
 }
@@ -80,8 +76,8 @@ Token ScanToken() {
   return MakeToken(TOKEN_ERROR);
 }
 
-std::vector<Token> Tokenizer(const char *source) {
-  std::vector<Token> tokens;
+Tokens Tokenizer(const char *source) {
+  Tokens tokens;
   scanner.current = source;
   do {
     tokens.emplace_back(ScanToken());

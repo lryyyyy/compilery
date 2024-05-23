@@ -11,11 +11,11 @@
 
 #define mu_run_test(test)                                                      \
   do {                                                                         \
-    auto message = test();                                                    \
+    auto message = test();                                                     \
     tests_summary++;                                                           \
-    if (message != "") {                                                             \
+    if (message != "") {                                                       \
       tests_failed++;                                                          \
-      printf("%s\n", message.c_str());                                                 \
+      printf("%s\n", message.c_str());                                         \
     } else {                                                                   \
       tests_access++;                                                          \
     }                                                                          \

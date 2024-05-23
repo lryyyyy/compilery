@@ -1,3 +1,4 @@
+#include "ast_builder.h"
 #include "mu_unit.h"
 #include "tokenizer.h"
 #include <string.h>
@@ -10,7 +11,7 @@ int tests_summary = 0;
 Token MakeTestToken(TOKEN_TYPE type, const char *str) {
   Token token;
   token.type_ = type;
-  token.start_ = str;
+  token.value_ = str;
   token.length_ = strlen(str);
   return token;
 }
@@ -25,8 +26,8 @@ bool TokenEq(Token *t1, Token *t2) {
     return false;
   }
   for (int i = 0; i < t1->length_; i++) {
-    if (t1->start_[i] != t2->start_[i]) {
-      printf("String error %c : %c!\n", t1->start_[i], t2->start_[i]);
+    if (t1->value_[i] != t2->value_[i]) {
+      printf("String error %c : %c!\n", t1->value_[i], t2->value_[i]);
       return false;
     }
   }
@@ -34,8 +35,8 @@ bool TokenEq(Token *t1, Token *t2) {
 }
 
 static std::string test_token() {
-  std::vector<Token> tokens = Tokenizer("(add 2 (subtract 4 2))");
-  std::vector<Token> result;
+  Tokens tokens = Tokenizer("(add 2 (subtract 4 2))");
+  Tokens result;
   result.emplace_back(MakeTestToken(TOKEN_PAREN, "("));
   result.emplace_back(MakeTestToken(TOKEN_STRING, "add"));
   result.emplace_back(MakeTestToken(TOKEN_NUMBER, "2"));
@@ -53,8 +54,29 @@ static std::string test_token() {
   return "";
 }
 
+void AstPrinter(Ast ast, int tab) {
+  for (int j = 0; j < tab; j++) {
+    printf("  ");
+  }
+  for (int i = 0; i < ast.length_; i++) {
+    printf("%c", ast.value_[i]);
+  }
+  printf("\n");
+  for (auto child : ast.children_) {
+    AstPrinter(child, tab + 1);
+  }
+}
+
+static std::string test_ast() {
+  Tokens tokens = Tokenizer("(add 2 (subtract 4 2))");
+  Ast ast = AstBuilder(tokens);
+  AstPrinter(ast, 0);
+  return "";
+}
+
 static void all_tests() {
   mu_run_test(test_token);
+  mu_run_test(test_ast);
 }
 
 int main(int argc, char **argv) {

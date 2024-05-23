@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 
 typedef enum TOKEN_TYPE_ {
@@ -9,10 +11,12 @@ typedef enum TOKEN_TYPE_ {
 
 typedef struct Token_ {
   TOKEN_TYPE type_;
-  const char *start_;
+  const char *value_;
   int length_;
 } Token;
 
+using Tokens = std::vector<Token>;
+
 Token MakeToken(TOKEN_TYPE type);
 
-std::vector<Token> Tokenizer(const char *source);
+Tokens Tokenizer(const char *source);
