@@ -1,8 +1,11 @@
 #include "ast_builder.h"
 #include <stdio.h>
 
-Ast MakeNode(Token *token) {
+int current = 0;
+
+Ast MakeNode(Tokens tokens) {
   Ast node;
+  Token *token = &tokens[current];
   if (token->type_ == TOKEN_NUMBER) {
     node.type_ = AST_NUMBER_LITERAL;
     node.value_ = token->value_;
@@ -11,16 +14,23 @@ Ast MakeNode(Token *token) {
     node.type_ = AST_STRING_LITERAL;
     node.value_ = token->value_;
     node.length_ = token->length_;
-    node.children_.emplace_back(MakeNode(++token));
-    node.children_.emplace_back(MakeNode(++token));
+    current++;
+    node.children_.emplace_back(MakeNode(tokens));
+    current++;
+    node.children_.emplace_back(MakeNode(tokens));
   } else if (token->type_ == TOKEN_PAREN) {
     if (*token->value_ == '(') {
       node.type_ = AST_EXPRESSION;
       node.value_ = "expr";
       node.length_ = 4;
-      node.children_.emplace_back(MakeNode(++token));
+      current++;
+      node.children_.emplace_back(MakeNode(tokens));
+      current++;
+      MakeNode(tokens);
     } else {
-        ++token;
+      node.type_ = AST_EXPRESSION;
+      node.value_ = "rpxe";
+      node.length_ = 4;
     }
   }
   return node;
@@ -28,6 +38,7 @@ Ast MakeNode(Token *token) {
 
 Ast AstBuilder(Tokens tokens) {
   Ast root;
-  root = MakeNode(&tokens[0]);
+  current = 0;
+  root = MakeNode(tokens);
   return root;
 }
