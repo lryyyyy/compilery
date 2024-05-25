@@ -54,23 +54,27 @@ static std::string test_token() {
   return "";
 }
 
-void AstPrinter(Ast ast, int tab) {
+std::string AstPrinter(Ast ast, int tab) {
+  std::string result = "";
   for (int j = 0; j < tab; j++) {
-    printf("  ");
+    result += "  ";
   }
   for (int i = 0; i < ast.length_; i++) {
-    printf("%c", ast.value_[i]);
+    result += ast.value_[i];
   }
-  printf("\n");
+  result += "\n";
   for (auto child : ast.children_) {
-    AstPrinter(child, tab + 1);
+    result += AstPrinter(child, tab + 1);
   }
+  return result;
 }
 
 static std::string test_ast() {
   Tokens tokens = Tokenizer("(add 2 (subtract 4 2))");
   Ast ast = AstBuilder(tokens);
-  AstPrinter(ast, 0);
+  std::string aststr = AstPrinter(ast, 0);
+  std::string result = "expr\n  add\n    2\n    expr\n      subtract\n        4\n        2\n";
+  mu_assert("ast not equal", aststr == result);
   return "";
 }
 

@@ -19,7 +19,8 @@ Ast MakeNode(Token *token) {
       node.value_ = "expr";
       node.length_ = 4;
       node.children_.emplace_back(MakeNode(++token));
-      MakeNode(++token);
+    } else {
+        ++token;
     }
   }
   return node;
