@@ -1,6 +1,4 @@
 #include "tokenizer.h"
-#include <stdbool.h>
-#include <stdio.h>
 
 typedef struct Scanner_ {
   const char *start;
@@ -11,10 +9,6 @@ Scanner scanner;
 
 char Peek() {
   return *scanner.current;
-}
-
-char PeekNext() {
-  return *scanner.current++;
 }
 
 bool IsAlpha(char ch) {
@@ -52,19 +46,20 @@ void SkipWhiteSpace() {
   char ch = Peek();
   while (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') {
     scanner.current++;
+    ch = Peek();
   }
+  scanner.start = scanner.current;
 }
 
 Token MakeToken(TOKEN_TYPE type) {
   Token token;
   token.type_ = type;
-  token.start_ = scanner.start;
+  token.value_ = scanner.start;
   token.length_ = (int)(scanner.current - scanner.start);
   return token;
 }
 
-Token Tokenizer(const char *source) {
-  scanner.current = source;
+Token ScanToken() {
   SkipWhiteSpace();
   scanner.start = scanner.current;
   char ch = Peek();
@@ -79,4 +74,13 @@ Token Tokenizer(const char *source) {
     return Number();
   }
   return MakeToken(TOKEN_ERROR);
+}
+
+Tokens Tokenizer(const char *source) {
+  Tokens tokens;
+  scanner.current = source;
+  do {
+    tokens.emplace_back(ScanToken());
+  } while (tokens.back().type_ != TOKEN_ERROR);
+  return tokens;
 }
