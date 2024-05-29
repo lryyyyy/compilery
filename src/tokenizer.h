@@ -3,6 +3,7 @@
 #include <vector>
 
 typedef enum TOKEN_TYPE_ {
+  TOKEN_DOT,
   TOKEN_PAREN,
   TOKEN_STRING,
   TOKEN_NUMBER,

@@ -1,6 +1,7 @@
 #include "ast_builder.h"
 #include "mu_unit.h"
 #include "tokenizer.h"
+#include "code_generator.h"
 #include <string.h>
 #include <string>
 
@@ -54,6 +55,16 @@ static std::string test_token() {
   return "";
 }
 
+std::string TokenPrinter(Tokens tokens) {
+  std::string result = "";
+  for (auto token : tokens) {
+    for (int i = 0; i < token.length_; i++) {
+      result += token.value_[i];
+    }
+  }
+  return result;
+}
+
 std::string AstPrinter(Ast ast, int tab) {
   std::string result = "";
   for (int j = 0; j < tab; j++) {
@@ -79,6 +90,10 @@ static std::string test_ast1() {
   aststr = AstPrinter(ast, 0);
   result = "add\n  2\n  subtract\n    4\n    2\n";
   mu_assert("ast not equal", aststr == result);
+  Tokens code = CodeGenerator(ast);
+  std::string codestr = TokenPrinter(code);
+  result = "add(2, subtract(4, 2))";
+  mu_assert("code not equal", codestr == result);
   return "";
 }
 
@@ -92,6 +107,10 @@ static std::string test_ast2() {
   aststr = AstPrinter(ast, 0);
   result = "add\n  mul\n    2\n    3\n  subtract\n    4\n    2\n";
   mu_assert("ast not equal", aststr == result);
+  Tokens code = CodeGenerator(ast);
+  std::string codestr = TokenPrinter(code);
+  result = "add(mul(2, 3), subtract(4, 2))";
+  mu_assert("code not equal", codestr == result);
   return "";
 }
 
