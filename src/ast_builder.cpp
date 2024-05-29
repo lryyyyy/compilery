@@ -42,3 +42,13 @@ Ast AstBuilder(Tokens tokens) {
   root = MakeNode(tokens);
   return root;
 }
+
+Ast AstOptimizer(Ast ast) {
+  if (ast.type_ == AST_EXPRESSION && ast.children_.size() == 1) {
+    ast = ast.children_[0];
+  }
+  for (auto &child : ast.children_) {
+    child = AstOptimizer(child);
+  }
+  return ast;
+}

@@ -73,8 +73,11 @@ static std::string test_ast1() {
   Tokens tokens = Tokenizer("(add 2 (subtract 4 2))");
   Ast ast = AstBuilder(tokens);
   std::string aststr = AstPrinter(ast, 0);
-  printf("%s\n", aststr.c_str());
   std::string result = "expr\n  add\n    2\n    expr\n      subtract\n        4\n        2\n";
+  mu_assert("ast not equal", aststr == result);
+  ast = AstOptimizer(ast);
+  aststr = AstPrinter(ast, 0);
+  result = "add\n  2\n  subtract\n    4\n    2\n";
   mu_assert("ast not equal", aststr == result);
   return "";
 }
@@ -83,9 +86,11 @@ static std::string test_ast2() {
   Tokens tokens = Tokenizer("(add (mul 2 3) (subtract 4 2))");
   Ast ast = AstBuilder(tokens);
   std::string aststr = AstPrinter(ast, 0);
-  printf("%s\n", aststr.c_str());
   std::string result = "expr\n  add\n    expr\n      mul\n        2\n        3\n    expr\n      subtract\n        4\n        2\n";
-  printf("%s\n", result.c_str());
+  mu_assert("ast not equal", aststr == result);
+  ast = AstOptimizer(ast);
+  aststr = AstPrinter(ast, 0);
+  result = "add\n  mul\n    2\n    3\n  subtract\n    4\n    2\n";
   mu_assert("ast not equal", aststr == result);
   return "";
 }

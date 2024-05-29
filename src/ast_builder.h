@@ -19,3 +19,5 @@ typedef struct Ast_ {
 Ast MakeNode();
 
 Ast AstBuilder(Tokens tokens);
+
+Ast AstOptimizer(Ast ast);
