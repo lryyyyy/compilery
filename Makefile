@@ -1,7 +1,9 @@
 all: build unit_test
 
 build:
-	./run.sh
+	@cmake -B build
+	@cmake --build build
+	@cp build/test/unit_test unit_test
 
 unit_test:
 	@ ./unit_test
